@@ -2,15 +2,18 @@ using System;
 
 namespace Libs.Core.Extensions
 {
-    public static class TimeSpanExtensions
+    public static class TimeExtensions
     {
         /// <summary>
-        /// Indicates whether a <see cref="TimeSpan"/> value is between two other <see cref="TimeSpan"/> values.
+        /// Indicates whether a time value is between two other time values, bounds included.
         /// </summary>
+        /// <remarks>
+        /// Since time is continuous, to create the 24h range <c start/> must equal <c end/>.
+        /// </remarks>
         /// <param name="time">A value to compare to.</param>
         /// <param name="start">A value that starts the period.</param>
         /// <param name="end">A value that ends the period.</param>
-        /// <returns></returns>
+        /// <returns>true, if the given <see cref="TimeSpan"/> is in range of the other two values.</returns>
         public static bool IsBetween(this TimeSpan time, TimeSpan start, TimeSpan end)
         {
             return start < end
@@ -44,5 +47,17 @@ namespace Libs.Core.Extensions
         /// <returns>Given time in the cron format.</returns>
         public static string ToCron(this TimeSpan time)
             => $"{time:m\\ h} * * *";
+
+        public static bool IsAfter(this DateTime dateTime, DateTime start, bool inclusive = true)
+            => (inclusive && dateTime == start) || dateTime > start;
+
+        public static bool IsAfter(this DateTime dateTime, DateTime? start, bool inclusive = true)
+            => !start.HasValue || dateTime.IsAfter(start.Value, inclusive);
+
+        public static bool IsBefore(this DateTime dateTime, DateTime end, bool inclusive = true)
+            => (inclusive && dateTime == end) || dateTime < end;
+
+        public static bool IsBefore(this DateTime dateTime, DateTime? end, bool inclusive = true)
+            => !end.HasValue || dateTime.IsBefore(end.Value, inclusive);
     }
 }
